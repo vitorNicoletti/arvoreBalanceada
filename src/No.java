@@ -2,12 +2,14 @@ public class No {
     private Palavra valor;
     private No esquerda;
     private No direita;
+    public int altura;
 
     public No(Palavra valor) {
         this.valor = valor;
     }
     public No(String palavra, String dirPath) {
         valor = new Palavra(palavra, dirPath);
+        altura = -1;
     }
 
     public Palavra getValor() {
@@ -25,28 +27,17 @@ public class No {
             } else {
                 direita = inserirDireitaOuEsquerda(direita, palavraNova, dirPath); // A palavra vem depois (maior)
             }
-
-            int subtracao = diferencaBalanceamento();
-            if (subtracao == 2) {
-                if (esquerda != null && esquerda.diferencaBalanceamento() == -1) {
-                    // Rotação Dupla à Direita (LR)
-                    esquerda.rotacaoEsquerda();
-                }
-
-                rotacaoDireita();
-            }
-            else if (subtracao == -2) { // A subárvore direita está desbalanceada
-                if (direita != null && direita.diferencaBalanceamento() == 1) {
-                    // Rotação Dupla à Esquerda (RL)
-                    direita.rotacaoDireita(); // Primeiro, faça a rotação à direita no filho direito
-                }
-                // Rotação Simples à Esquerda
-                rotacaoEsquerda(); // Depois, faça a rotação à esquerda
-            }
+            altura = calcularAltura();
 
         }
     }
-
+    public int calcularAltura(){
+        int alturaEsquerda = -1;
+        int alturaDireita = -1;
+        if (esquerda != null) alturaEsquerda = esquerda.altura;
+        if (direita !=null) alturaDireita = direita.altura;
+        return Math.max(alturaEsquerda,alturaDireita) + 1;
+    }
     private No inserirDireitaOuEsquerda(No direcao, String palavraNova, String dirPath) {
         if (direcao == null) {
             return new No(palavraNova, dirPath); // Cria um novo nó se o lado (esquerda ou direita) for null
@@ -54,34 +45,9 @@ public class No {
             direcao.inserirElemento(palavraNova, dirPath); // Continua a inserção recursivamente
             return direcao;
         }
-    }
-    private void rotacaoDireita() {
-        // Guardamos a subárvore esquerda (que será promovida)
-        No novaRaiz = this.esquerda;
 
-        // Ajustamos o filho esquerdo para ser o filho direito da nova raiz
-        this.esquerda = novaRaiz.direita;
-
-        // Promovemos a nova raiz no lugar de "this"
-        novaRaiz.direita = this;
-
-        // Atualiza o valor do nó atual com o da nova raiz (troca de informações)
-        this.valor = novaRaiz.valor;
-        this.direita = novaRaiz.direita;
-        this.esquerda = novaRaiz.esquerda;
     }
 
-    private void rotacaoEsquerda() {
-        No novaRaiz = this.direita;
-
-        this.direita = novaRaiz.esquerda;
-
-        novaRaiz.esquerda = this;
-
-        this.valor = novaRaiz.valor;
-        this.direita = novaRaiz.direita;
-        this.esquerda = novaRaiz.esquerda;
-    }
 
     public No acharElemento(String palavra) {
         int comparacao = palavra.compareToIgnoreCase(valor.getPalavra());
@@ -104,21 +70,6 @@ public class No {
             alturaDir = 1 + direita.altura();
         }
         return Math.max(alturaDir, alturaEsq);
-    }
-    public int[] alturaEsqDir() {
-        int alturaEsq = 0;
-        int alturaDir = 0;
-        if (esquerda != null) {
-            alturaEsq = 1+ esquerda.altura();
-        }
-        if (direita != null) {
-            alturaDir = 1 + direita.altura();
-        }
-        return new int[]{alturaEsq,alturaDir};
-    }
-    public int diferencaBalanceamento(){
-        int[] alturas = alturaEsqDir();
-        return alturas[0] - alturas[1];
     }
     public void mostrarInorder() {
         if (esquerda != null) {

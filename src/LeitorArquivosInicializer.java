@@ -1,7 +1,7 @@
 import java.io.File;
 
 public class LeitorArquivosInicializer {
-    No raiz;
+    ArvoreAVL raizz;
 
 
     public static void main(String[] args){

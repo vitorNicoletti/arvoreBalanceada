@@ -5,12 +5,13 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class LeitorArquivos {
-    No raiz;
+    ArvoreAVL arvore;
     File[] arquivos;
     File txtAtual;
 
     public LeitorArquivos(File[] arquivos) {
         this.arquivos = arquivos;
+        arvore = new ArvoreAVL();
     }
 
     public void readFiles() {
@@ -36,15 +37,15 @@ public class LeitorArquivos {
     }
 
     public void addWordOnTree(String palavra) {
-        if (raiz == null) {
-            raiz = new No(palavra, txtAtual.getPath());
+        if (arvore.raiz == null) {
+            arvore.raiz = new No(palavra, txtAtual.getPath());
         } else {
-            raiz.inserirElemento(palavra, txtAtual.getPath());
+            arvore.inserirElemento(palavra, txtAtual.getPath());
         }
     }
 
     public String getWord(String palavra) {
-        No p = raiz.acharElemento(palavra);
+        No p = arvore.raiz.acharElemento(palavra);
         if (p != null){
             return p.getValor().toString();
         }
